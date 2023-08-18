@@ -58,7 +58,7 @@
                     <user>postgres</user>
                     <password>password</password>
                     <schemas>
-                        <schema>public</schema>
+                        <schema>tt</schema>
                     </schemas>
                 </configuration>
             </plugin>

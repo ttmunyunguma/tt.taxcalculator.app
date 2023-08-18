@@ -1,8 +1,47 @@
---create tax_codes table
-CREATE TABLE IF NOT EXISTS public.tax_codes
+CREATE TABLE IF NOT EXISTS tt.tax_codes
 (
-    id      integer      NOT NULL,
-    code    varchar(100) NOT NULL,
-    summary text,
-    PRIMARY KEY (id)
+    id      SERIAL PRIMARY KEY,
+    code    varchar(20) NOT NULL,
+    summary text
 );
+
+INSERT INTO tt.tax_codes(code, summary)
+VALUES ('L', 'You’re entitled to the standard tax-free Personal Allowance'),
+       ('M', 'Marriage Allowance: you’ve received a transfer of 10% of your partner’s Personal Allowance'),
+       ('N', 'Marriage Allowance: you’ve transferred 10% of your Personal Allowance to your partner'),
+       ('T', 'Your tax code includes other calculations to work out your Personal Allowance'),
+       ('0T',
+        'Your Personal Allowance has been used up, or you’ve started a new job and your employer does not have the details they need to give you a tax code'),
+       ('BR',
+        'All your income from this job or pension is taxed at the basic rate (usually used if you’ve got more than one job or pension)'),
+       ('D0',
+        'All your income from this job or pension is taxed at the higher rate (usually used if you’ve got more than one job or pension)'),
+       ('D1',
+        'All your income from this job or pension is taxed at the additional rate (usually used if you’ve got more than one job or pension)'),
+       ('NT', 'You’re not paying any tax on this income'),
+       ('S', 'Your income or pension is taxed using the rates in Scotland'),
+       ('S0T',
+        'Your Personal Allowance (Scotland) has been used up, or you’ve started a new job and your employer does not have the details they need to give you a tax code'),
+       ('SBR',
+        'All your income from this job or pension is taxed at the basic rate in Scotland (usually used if you’ve got more than one job or pension)'),
+       ('SD0',
+        'All your income from this job or pension is taxed at the intermediate rate in Scotland (usually used if you’ve got more than one job or pension)'),
+       ('SD1',
+        'All your income from this job or pension is taxed at the higher rate in Scotland (usually used if you’ve got more than one job or pension)'),
+       ('SD2',
+        'All your income from this job or pension is taxed at the top rate in Scotland (usually used if you’ve got more than one job or pension)'),
+       ('C', 'Your income or pension is taxed using the rates in Wales'),
+       ('C0T',
+        'Your Personal Allowance (Wales) has been used up, or you’ve started a new job and your employer does not have the details they need to give you a tax code'),
+       ('CBR',
+        'All your income from this job or pension is taxed at the basic rate in Wales (usually used if you’ve got more than one job or pension)'),
+       ('CD0',
+        'All your income from this job or pension is taxed at the higher rate in Wales (usually used if you’ve got more than one job or pension) '),
+       ('CD1',
+        'All your income from this job or pension is taxed at the additional rate in Wales (usually used if you’ve got more than one job or pension)'),
+       ('K',
+        'At the beginning of your tax code - means you have income that is not being taxed another way and it’s worth more than your tax-free allowance.'),
+       ('X',
+        'Your tax is based on your pay in each pay period, not the whole year. This stops you from paying too much tax in one go. Your payslip or pension statement could show this as W1/M1, or week1/month1.'),
+       ('W1', 'At the end of your tax code - These are emergency tax codes'),
+       ('M1', 'At the end of your tax code - These are emergency tax codes');
