@@ -1,11 +1,11 @@
-CREATE TABLE IF NOT EXISTS tt.tax_codes
+CREATE TABLE IF NOT EXISTS public.tax_codes
 (
     id      SERIAL PRIMARY KEY,
     code    varchar(20) NOT NULL,
     summary text
 );
 
-INSERT INTO tt.tax_codes(code, summary)
+INSERT INTO public.tax_codes(code, summary)
 VALUES ('L', 'You’re entitled to the standard tax-free Personal Allowance'),
        ('M', 'Marriage Allowance: you’ve received a transfer of 10% of your partner’s Personal Allowance'),
        ('N', 'Marriage Allowance: you’ve transferred 10% of your Personal Allowance to your partner'),
