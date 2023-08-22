@@ -1,11 +1,11 @@
 package com.takutaxa.taxcalculator.service;
 
 import com.takutaxa.taxcalculator.entity.TaxCode;
-import org.springframework.stereotype.Service;
+import com.takutaxa.taxcalculator.entity.TaxCodeDTO;
 
 import java.util.List;
 
 public interface TaxCodeService {
 
-    public List<TaxCode> getAllTaxCodes();
+    List<TaxCodeDTO> getAllTaxCodes();
 }
