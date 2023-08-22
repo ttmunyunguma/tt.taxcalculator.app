@@ -1,6 +1,5 @@
 package com.takutaxa.taxcalculator.controller;
 
-import com.takutaxa.taxcalculator.entity.TaxCode;
 import com.takutaxa.taxcalculator.entity.TaxCodeDTO;
 import com.takutaxa.taxcalculator.service.TaxCodeService;
 import lombok.RequiredArgsConstructor;
