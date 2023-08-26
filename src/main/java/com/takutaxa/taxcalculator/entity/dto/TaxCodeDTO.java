@@ -1,4 +1,4 @@
-package com.takutaxa.taxcalculator.entity;
+package com.takutaxa.taxcalculator.entity.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

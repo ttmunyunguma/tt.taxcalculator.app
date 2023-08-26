@@ -1,6 +1,6 @@
 package com.takutaxa.taxcalculator.controller;
 
-import com.takutaxa.taxcalculator.entity.TaxCodeDTO;
+import com.takutaxa.taxcalculator.entity.dto.TaxCodeDTO;
 import com.takutaxa.taxcalculator.service.TaxCodeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

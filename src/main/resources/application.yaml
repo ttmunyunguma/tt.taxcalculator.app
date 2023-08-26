@@ -15,3 +15,7 @@ spring:
   flyway:
     enabled: true
 
+
+tt:
+  taxcodes:
+    default: 1257L
