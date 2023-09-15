@@ -3,6 +3,7 @@ package com.takutaxa.taxcalculator.controller;
 import com.takutaxa.taxcalculator.entity.dto.TaxCodeDTO;
 import com.takutaxa.taxcalculator.service.TaxCodeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +19,6 @@ public class TaxCodeController {
     @GetMapping("/tax-codes")
     public ResponseEntity<List<TaxCodeDTO>> getAllTaxCodes(){
         List<TaxCodeDTO> taxCodeDTOS = taxCodeService.getAllTaxCodes();
-        return ResponseEntity.ok(taxCodeDTOS);
+        return new ResponseEntity<>(taxCodeDTOS, HttpStatus.OK);
     }
 }
