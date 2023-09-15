@@ -36,6 +36,30 @@ public class TaxCalculatorServiceImpl implements TaxCalculatorService{
                 .build();
     }
 
+    private Double calculateAnnualGrossSalary(TaxCalculatorRequestDTO taxCalculatorRequestDTO) {
+        return switch (taxCalculatorRequestDTO.getSalaryFrequency()){
+            case WEEKLY -> taxCalculatorRequestDTO.getGrossSalary() * WEEKS_IN_YEAR;
+            case MONTHLY -> taxCalculatorRequestDTO.getGrossSalary() * MONTHS_IN_YEAR;
+            case ANNUALLY -> taxCalculatorRequestDTO.getGrossSalary();
+        };
+    }
+
+    private Double calculateMonthlyGrossSalary(TaxCalculatorRequestDTO taxCalculatorRequestDTO) {
+        return switch (taxCalculatorRequestDTO.getSalaryFrequency()){
+            case WEEKLY -> taxCalculatorRequestDTO.getGrossSalary() * WEEKS_IN_YEAR / MONTHS_IN_YEAR;
+            case MONTHLY -> taxCalculatorRequestDTO.getGrossSalary();
+            case ANNUALLY -> taxCalculatorRequestDTO.getGrossSalary() / MONTHS_IN_YEAR;
+        };
+    }
+
+    private Double calculateWeeklyGrossSalary(TaxCalculatorRequestDTO taxCalculatorRequestDTO) {
+        return switch (taxCalculatorRequestDTO.getSalaryFrequency()){
+            case WEEKLY -> taxCalculatorRequestDTO.getGrossSalary();
+            case MONTHLY -> taxCalculatorRequestDTO.getGrossSalary() * MONTHS_IN_YEAR / WEEKS_IN_YEAR;
+            case ANNUALLY -> taxCalculatorRequestDTO.getGrossSalary() / WEEKS_IN_YEAR;
+        };
+    }
+
     private double calculateIncomeTax(double annualTaxableIncome) {
         double basicRateTax;
         double higherRateTax;
@@ -58,27 +82,5 @@ public class TaxCalculatorServiceImpl implements TaxCalculatorService{
         return basicRateTax + higherRateTax + (additionalRateIncome * ADDITIONAL_RATE);
     }
 
-    private Double calculateWeeklyGrossSalary(TaxCalculatorRequestDTO taxCalculatorRequestDTO) {
-        return switch (taxCalculatorRequestDTO.getSalaryFrequency()){
-            case WEEKLY -> taxCalculatorRequestDTO.getGrossSalary();
-            case MONTHLY -> taxCalculatorRequestDTO.getGrossSalary() * MONTHS_IN_YEAR / WEEKS_IN_YEAR;
-            case ANNUALLY -> taxCalculatorRequestDTO.getGrossSalary() / WEEKS_IN_YEAR;
-        };
-    }
 
-    private Double calculateMonthlyGrossSalary(TaxCalculatorRequestDTO taxCalculatorRequestDTO) {
-        return switch (taxCalculatorRequestDTO.getSalaryFrequency()){
-            case WEEKLY -> taxCalculatorRequestDTO.getGrossSalary() * WEEKS_IN_YEAR / MONTHS_IN_YEAR;
-            case MONTHLY -> taxCalculatorRequestDTO.getGrossSalary();
-            case ANNUALLY -> taxCalculatorRequestDTO.getGrossSalary() / MONTHS_IN_YEAR;
-        };
-    }
-
-    private Double calculateAnnualGrossSalary(TaxCalculatorRequestDTO taxCalculatorRequestDTO) {
-        return switch (taxCalculatorRequestDTO.getSalaryFrequency()){
-            case WEEKLY -> taxCalculatorRequestDTO.getGrossSalary() * WEEKS_IN_YEAR;
-            case MONTHLY -> taxCalculatorRequestDTO.getGrossSalary() * MONTHS_IN_YEAR;
-            case ANNUALLY -> taxCalculatorRequestDTO.getGrossSalary();
-        };
-    }
 }
