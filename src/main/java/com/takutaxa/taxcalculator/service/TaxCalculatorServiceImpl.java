@@ -33,22 +33,25 @@ public class TaxCalculatorServiceImpl implements TaxCalculatorService {
     private TaxCalculatorResponseDTO calculateNetSalaryDefaultTaxCode(TaxCalculatorRequestDTO taxCalculatorRequestDTO) {
         double grossAnnualSalary = calculateAnnualGrossSalary(taxCalculatorRequestDTO);
         double annualTaxableIncome = grossAnnualSalary - PERSONAL_ALLOWANCES;
-        double annualIncomeTax = calculateIncomeTax(annualTaxableIncome);
+        double annualIncomeTax = calculateAnnualIncomeTax(annualTaxableIncome);
 
         return TaxCalculatorResponseDTO.builder()
                 .annualGrossSalary(calculateAnnualGrossSalary(taxCalculatorRequestDTO))
                 .annualIncomeTax(annualIncomeTax)
-                .annualNationalInsurance(calculateAnnualNationalInsurance(grossAnnualSalary))
+                .annualNationalInsurance(calculateAnnualNationalInsurance(calculateAnnualGrossSalary(taxCalculatorRequestDTO)))
+                .annualNetSalary(calculateAnnualNetIncome(taxCalculatorRequestDTO))
                 .monthlyGrossSalary(calculateMonthlyGrossSalary(taxCalculatorRequestDTO))
                 .monthlyIncomeTax(annualIncomeTax / MONTHS_IN_YEAR)
                 .monthlyNationalInsurance(calculateMonthlyNationalInsurance(calculateMonthlyGrossSalary(taxCalculatorRequestDTO)))
+                .monthlyNetSalary(calculateMonthlyNetIncome(taxCalculatorRequestDTO))
                 .weeklyGrossSalary(calculateWeeklyGrossSalary(taxCalculatorRequestDTO))
                 .weeklyIncomeTax(annualIncomeTax / WEEKS_IN_YEAR)
                 .weeklyNationalInsurance(calculateWeeklyNationalInsurance(calculateWeeklyGrossSalary(taxCalculatorRequestDTO)))
+                .weeklyNetSalary(calculateWeeklyNetIncome(taxCalculatorRequestDTO))
                 .build();
     }
 
-    private Double calculateAnnualGrossSalary(TaxCalculatorRequestDTO taxCalculatorRequestDTO) {
+    private double calculateAnnualGrossSalary(TaxCalculatorRequestDTO taxCalculatorRequestDTO) {
         return switch (taxCalculatorRequestDTO.getSalaryFrequency()) {
             case WEEKLY -> taxCalculatorRequestDTO.getGrossSalary() * WEEKS_IN_YEAR;
             case MONTHLY -> taxCalculatorRequestDTO.getGrossSalary() * MONTHS_IN_YEAR;
@@ -56,7 +59,7 @@ public class TaxCalculatorServiceImpl implements TaxCalculatorService {
         };
     }
 
-    private Double calculateMonthlyGrossSalary(TaxCalculatorRequestDTO taxCalculatorRequestDTO) {
+    private double calculateMonthlyGrossSalary(TaxCalculatorRequestDTO taxCalculatorRequestDTO) {
         return switch (taxCalculatorRequestDTO.getSalaryFrequency()) {
             case WEEKLY -> taxCalculatorRequestDTO.getGrossSalary() * WEEKS_IN_YEAR / MONTHS_IN_YEAR;
             case MONTHLY -> taxCalculatorRequestDTO.getGrossSalary();
@@ -64,7 +67,7 @@ public class TaxCalculatorServiceImpl implements TaxCalculatorService {
         };
     }
 
-    private Double calculateWeeklyGrossSalary(TaxCalculatorRequestDTO taxCalculatorRequestDTO) {
+    private double calculateWeeklyGrossSalary(TaxCalculatorRequestDTO taxCalculatorRequestDTO) {
         return switch (taxCalculatorRequestDTO.getSalaryFrequency()) {
             case WEEKLY -> taxCalculatorRequestDTO.getGrossSalary();
             case MONTHLY -> taxCalculatorRequestDTO.getGrossSalary() * MONTHS_IN_YEAR / WEEKS_IN_YEAR;
@@ -72,7 +75,7 @@ public class TaxCalculatorServiceImpl implements TaxCalculatorService {
         };
     }
 
-    private double calculateIncomeTax(double annualTaxableIncome) {
+    private double calculateAnnualIncomeTax(double annualTaxableIncome) {
         if (annualTaxableIncome < 0)
             return 0;
 
@@ -94,20 +97,21 @@ public class TaxCalculatorServiceImpl implements TaxCalculatorService {
         return basicRateTax + higherRateTax + (additionalRateIncome * ADDITIONAL_RATE);
     }
 
-    private double calculateWeeklyNationalInsurance(Double weeklyGrossSalary) {
+    private double calculateWeeklyNationalInsurance(double weeklyGrossSalary) {
         return calculateNI(weeklyGrossSalary, NI_WEEKLY_LOWER_THRESHOLD, NI_WEEKLY_UPPER_THRESHOLD);
     }
 
-    private double calculateMonthlyNationalInsurance(Double monthlyGrossSalary) {
+    private double calculateMonthlyNationalInsurance(double monthlyGrossSalary) {
         return calculateNI(monthlyGrossSalary, NI_MONTHLY_LOWER_THRESHOLD, NI_MONTHLY_UPPER_THRESHOLD);
     }
 
-    private double calculateAnnualNationalInsurance(Double annualGrossSalary){
+    private double calculateAnnualNationalInsurance(double annualGrossSalary){
         double monthlyGrossSalary = annualGrossSalary / MONTHS_IN_YEAR;
-        return calculateNI(monthlyGrossSalary, NI_MONTHLY_LOWER_THRESHOLD, NI_MONTHLY_UPPER_THRESHOLD);
+        double monthlyNI = calculateNI(monthlyGrossSalary, NI_MONTHLY_LOWER_THRESHOLD, NI_MONTHLY_UPPER_THRESHOLD);
+        return monthlyNI * MONTHS_IN_YEAR;
     }
 
-    private double calculateNI(Double grossSalary, double niLowerThreshold, double niUpperThreshold) {
+    private double calculateNI(double grossSalary, double niLowerThreshold, double niUpperThreshold) {
         if (grossSalary < niLowerThreshold)
             return 0;
 
@@ -118,5 +122,38 @@ public class TaxCalculatorServiceImpl implements TaxCalculatorService {
             double upperNI = NI_UPPER_RATE * (grossSalary - niUpperThreshold);
             return lowerNI + upperNI;
         }
+    }
+    
+    private double calculateAnnualNetIncome(TaxCalculatorRequestDTO taxCalculatorRequestDTO){
+        double grossAnnualSalary = calculateAnnualGrossSalary(taxCalculatorRequestDTO);
+        double annualTaxableIncome = grossAnnualSalary - PERSONAL_ALLOWANCES;
+        double annualIncomeTax = calculateAnnualIncomeTax(annualTaxableIncome);
+        double annualNI = calculateAnnualNationalInsurance(grossAnnualSalary);
+
+        return grossAnnualSalary - annualIncomeTax - annualNI;
+    }
+
+    private double calculateMonthlyNetIncome(TaxCalculatorRequestDTO taxCalculatorRequestDTO){
+        double grossAnnualSalary = calculateAnnualGrossSalary(taxCalculatorRequestDTO);
+        double annualTaxableIncome = grossAnnualSalary - PERSONAL_ALLOWANCES;
+        double annualIncomeTax = calculateAnnualIncomeTax(annualTaxableIncome);
+
+        double grossMonthlySalary = calculateMonthlyGrossSalary(taxCalculatorRequestDTO);
+        double monthlyIncomeTax = annualIncomeTax / MONTHS_IN_YEAR;
+        double monthlyNI = calculateMonthlyNationalInsurance(grossMonthlySalary);
+
+        return grossMonthlySalary - monthlyIncomeTax - monthlyNI;
+    }
+
+    private double calculateWeeklyNetIncome(TaxCalculatorRequestDTO taxCalculatorRequestDTO){
+        double grossAnnualSalary = calculateAnnualGrossSalary(taxCalculatorRequestDTO);
+        double annualTaxableIncome = grossAnnualSalary - PERSONAL_ALLOWANCES;
+        double annualIncomeTax = calculateAnnualIncomeTax(annualTaxableIncome);
+
+        double grossWeeklySalary = calculateWeeklyGrossSalary(taxCalculatorRequestDTO);
+        double weeklyIncomeTax = annualIncomeTax / WEEKS_IN_YEAR;
+        double weeklyNI = calculateWeeklyNationalInsurance(grossWeeklySalary);
+
+        return grossWeeklySalary - weeklyIncomeTax - weeklyNI;
     }
 }
