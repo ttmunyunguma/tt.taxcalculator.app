@@ -38,10 +38,13 @@ public class TaxCalculatorServiceImpl implements TaxCalculatorService {
         return TaxCalculatorResponseDTO.builder()
                 .annualGrossSalary(calculateAnnualGrossSalary(taxCalculatorRequestDTO))
                 .annualIncomeTax(annualIncomeTax)
+                .annualNationalInsurance(calculateAnnualNationalInsurance(grossAnnualSalary))
                 .monthlyGrossSalary(calculateMonthlyGrossSalary(taxCalculatorRequestDTO))
                 .monthlyIncomeTax(annualIncomeTax / MONTHS_IN_YEAR)
+                .monthlyNationalInsurance(calculateMonthlyNationalInsurance(calculateMonthlyGrossSalary(taxCalculatorRequestDTO)))
                 .weeklyGrossSalary(calculateWeeklyGrossSalary(taxCalculatorRequestDTO))
                 .weeklyIncomeTax(annualIncomeTax / WEEKS_IN_YEAR)
+                .weeklyNationalInsurance(calculateWeeklyNationalInsurance(calculateWeeklyGrossSalary(taxCalculatorRequestDTO)))
                 .build();
     }
 
