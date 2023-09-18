@@ -1,7 +1,7 @@
 package com.takutaxa.taxcalculator.service;
 
 import com.takutaxa.taxcalculator.entity.TaxCode;
-import com.takutaxa.taxcalculator.entity.TaxCodeDTO;
+import com.takutaxa.taxcalculator.entity.dto.TaxCodeDTO;
 import com.takutaxa.taxcalculator.repository.TaxCodeRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
